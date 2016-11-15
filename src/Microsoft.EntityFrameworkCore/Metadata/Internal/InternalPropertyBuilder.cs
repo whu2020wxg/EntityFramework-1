@@ -250,10 +250,10 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public virtual bool ValueGenerated(ValueGenerated valueGenerated, ConfigurationSource configurationSource)
+        public virtual bool ValueGenerated(ValueGenerated? valueGenerated, ConfigurationSource configurationSource)
         {
             if (configurationSource.Overrides(Metadata.GetValueGeneratedConfigurationSource())
-                || (Metadata.ValueGenerated == valueGenerated))
+                || Metadata.ValueGenerated == valueGenerated)
             {
                 Metadata.SetValueGenerated(valueGenerated, configurationSource);
 

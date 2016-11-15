@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 {
-    public class KeyConventionTest
+    public class ValueGeneratorConventionTest
     {
         private class SampleEntity
         {
@@ -47,7 +47,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.HasKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -78,7 +78,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = referencedEntityBuilder.HasKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -105,7 +105,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = referencedEntityBuilder.HasKey(new List<string> { "Id", "SampleEntityId" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -133,7 +133,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = referencedEntityBuilder.HasKey(new List<string> { "SampleEntityId" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -156,7 +156,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.HasKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -178,7 +178,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = referencedEntityBuilder.HasKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -189,7 +189,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
                 referencedEntityBuilder.GetOrCreateProperties(properties, ConfigurationSource.Convention),
                 ConfigurationSource.Convention);
 
-            Assert.Same(foreignKeyBuilder, new KeyConvention().Apply(foreignKeyBuilder));
+            Assert.Same(foreignKeyBuilder, new ValueGeneratorConvention().Apply(foreignKeyBuilder));
 
             Assert.False(((IProperty)keyProperties[0]).RequiresValueGenerator);
         }
@@ -209,7 +209,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = referencedEntityBuilder.HasKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -220,13 +220,13 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
                 referencedEntityBuilder.GetOrCreateProperties(properties, ConfigurationSource.Convention),
                 ConfigurationSource.Convention);
 
-            Assert.Same(relationshipBuilder, new KeyConvention().Apply(relationshipBuilder));
+            Assert.Same(relationshipBuilder, new ValueGeneratorConvention().Apply(relationshipBuilder));
 
             Assert.False(((IProperty)keyProperties[0]).RequiresValueGenerator);
 
             referencedEntityBuilder.RemoveForeignKey(relationshipBuilder.Metadata, ConfigurationSource.Convention);
 
-            new KeyConvention().Apply(referencedEntityBuilder, relationshipBuilder.Metadata);
+            new ValueGeneratorConvention().Apply(referencedEntityBuilder, relationshipBuilder.Metadata);
 
             Assert.True(((IProperty)keyProperties[0]).RequiresValueGenerator);
         }
@@ -243,7 +243,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.PrimaryKey(new List<string> { "Id" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var property = keyBuilder.Metadata.Properties.First();
 
@@ -258,7 +258,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.HasKey(new List<string> { "Number" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var property = keyBuilder.Metadata.Properties.First();
 
@@ -273,7 +273,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.PrimaryKey(new List<string> { "Id", "Number" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
@@ -345,7 +345,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             Assert.Same(idProperty, entityBuilder.Metadata.FindProperty("Id"));
             Assert.Same(numberProperty, entityBuilder.Metadata.FindProperty("Number"));
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             Assert.Same(idProperty, entityBuilder.Metadata.FindProperty("Id"));
             Assert.Same(numberProperty, entityBuilder.Metadata.FindProperty("Number"));
@@ -365,7 +365,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyBuilder = entityBuilder.PrimaryKey(new List<string> { "Id" }, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var property = keyBuilder.Metadata.Properties.First();
 
@@ -383,7 +383,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             var properties = new List<string> { "Id" };
             var keyBuilder = referencedEntityBuilder.PrimaryKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var property = keyBuilder.Metadata.Properties.First();
 
@@ -394,7 +394,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
                 referencedEntityBuilder.GetOrCreateProperties(properties, ConfigurationSource.Convention),
                 ConfigurationSource.Convention);
 
-            Assert.Same(relationshipBuilder, new KeyConvention().Apply(relationshipBuilder));
+            Assert.Same(relationshipBuilder, new ValueGeneratorConvention().Apply(relationshipBuilder));
 
             Assert.Equal(ValueGenerated.Never, ((IProperty)property).ValueGenerated);
         }
@@ -410,7 +410,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             var properties = new List<string> { "Id" };
             var keyBuilder = referencedEntityBuilder.PrimaryKey(properties, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var property = keyBuilder.Metadata.Properties.First();
 
@@ -421,13 +421,13 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
                 referencedEntityBuilder.GetOrCreateProperties(properties, ConfigurationSource.Convention),
                 ConfigurationSource.Convention);
 
-            Assert.Same(relationshipBuilder, new KeyConvention().Apply(relationshipBuilder));
+            Assert.Same(relationshipBuilder, new ValueGeneratorConvention().Apply(relationshipBuilder));
 
             Assert.Equal(ValueGenerated.Never, ((IProperty)property).ValueGenerated);
 
             referencedEntityBuilder.RemoveForeignKey(relationshipBuilder.Metadata, ConfigurationSource.Convention);
 
-            Assert.True(new KeyConvention().Apply(keyBuilder, null));
+            Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             Assert.Equal(ValueGenerated.OnAdd, property.ValueGenerated);
         }
@@ -441,7 +441,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             conventions.EntityTypeAddedConventions.Add(new PropertyDiscoveryConvention());
             conventions.EntityTypeAddedConventions.Add(new KeyDiscoveryConvention());
 
-            var keyConvention = new KeyConvention();
+            var keyConvention = new ValueGeneratorConvention();
 
             conventions.ForeignKeyAddedConventions.Add(keyConvention);
             conventions.ForeignKeyRemovedConventions.Add(keyConvention);

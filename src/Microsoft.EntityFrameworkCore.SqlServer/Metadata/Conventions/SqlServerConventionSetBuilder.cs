@@ -16,10 +16,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
 
         public SqlServerConventionSetBuilder(
             [NotNull] IRelationalTypeMapper typeMapper,
+            [NotNull] IRelationalAnnotationProvider annotationProvider,
             [CanBeNull] ICurrentDbContext currentContext,
             [CanBeNull] IDbSetFinder setFinder,
             [NotNull] ISqlGenerationHelper sqlGenerationHelper)
-            : base(typeMapper, currentContext, setFinder)
+            : base(typeMapper, annotationProvider, currentContext, setFinder)
         {
             _sqlGenerationHelper = sqlGenerationHelper;
         }
@@ -33,13 +34,22 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
             var valueGenerationStrategyConvention = new SqlServerValueGenerationStrategyConvention();
             conventionSet.ModelInitializedConventions.Add(valueGenerationStrategyConvention);
 
-            var sqlServerInMemoryTablesConvention = new SqlServerMemoryOptimizedTablesConvention();
-            conventionSet.EntityTypeAnnotationSetConventions.Add(sqlServerInMemoryTablesConvention);
+            ValueGeneratorConvention valueGeneratorConvention = new SqlServerValueGeneratorConvention(AnnotationProvider);
+            ReplaceConvention(conventionSet.BaseEntityTypeSetConventions, valueGeneratorConvention);
 
-            conventionSet.KeyAddedConventions.Add(sqlServerInMemoryTablesConvention);
+            var sqlServerMemoryOptimizedTablesConvention = new SqlServerMemoryOptimizedTablesConvention();
+            conventionSet.EntityTypeAnnotationSetConventions.Add(sqlServerMemoryOptimizedTablesConvention);
+
+            ReplaceConvention(conventionSet.PrimaryKeySetConventions, valueGeneratorConvention);
+
+            conventionSet.KeyAddedConventions.Add(sqlServerMemoryOptimizedTablesConvention);
+
+            ReplaceConvention(conventionSet.ForeignKeyAddedConventions, valueGeneratorConvention);
+
+            ReplaceConvention(conventionSet.ForeignKeyRemovedConventions, valueGeneratorConvention);
 
             var sqlServerIndexConvention = new SqlServerIndexConvention(_sqlGenerationHelper);
-            conventionSet.IndexAddedConventions.Add(sqlServerInMemoryTablesConvention);
+            conventionSet.IndexAddedConventions.Add(sqlServerMemoryOptimizedTablesConvention);
             conventionSet.IndexAddedConventions.Add(sqlServerIndexConvention);
 
             conventionSet.IndexUniquenessConventions.Add(sqlServerIndexConvention);
@@ -49,12 +59,14 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions
             conventionSet.PropertyNullableChangedConventions.Add(sqlServerIndexConvention);
 
             conventionSet.PropertyAnnotationSetConventions.Add(sqlServerIndexConvention);
+            conventionSet.PropertyAnnotationSetConventions.Add((SqlServerValueGeneratorConvention)valueGeneratorConvention);
 
             return conventionSet;
         }
 
         public static ConventionSet Build()
-            => new SqlServerConventionSetBuilder(new SqlServerTypeMapper(), null, null, new SqlServerSqlGenerationHelper())
+            => new SqlServerConventionSetBuilder(
+                new SqlServerTypeMapper(), new SqlServerAnnotationProvider(), null, null, new SqlServerSqlGenerationHelper())
                 .AddConventions(new CoreConventionSetBuilder().CreateConventionSet());
     }
 }
