@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -428,8 +429,15 @@ namespace Microsoft.EntityFrameworkCore
             }
             else
             {
-                _changeTracker?.Reset();
-                _contextServices?.Reset();
+                var resettableServices = _contextServices?.InternalServiceProvider?.GetService<IEnumerable<IResettable>>()?.ToList();
+                if (resettableServices != null)
+                {
+                    foreach (var service in resettableServices)
+                    {
+                        service.Reset();
+                    }
+                }
+
                 _disposed = true;
             }
         }
